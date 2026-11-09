@@ -1,0 +1,30 @@
+services:
+  vocu-bridge:
+    build: .
+    container_name: vocu-bridge
+    restart: unless-stopped
+    init: true
+    # 仅绑定本机回环；若与 AstrBot 等容器同网络，可删掉 ports 直接用服务名访问。
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      - TZ=Asia/Shanghai
+      - VOCU_BASE_URLS=https://v1.vocu.studio,https://v1.wusound.cn
+      - VOCU_MODEL=v4.0
+      - VOCU_MAX_TEXT_CHARACTERS=1200
+      - VOCU_TIMEOUT_SECONDS=360
+      - AUDIO_DOWNLOAD_TIMEOUT_SECONDS=90
+      - FFMPEG_TIMEOUT_SECONDS=90
+      - VOCU_MAX_CONCURRENCY=1
+      - VOCU_PROMPT_ID=default
+      - VOCU_REFERENCE_MODE=balanced
+      - VOCU_LANGUAGE=auto
+      - VOCU_FLASH=false
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=32m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 64
